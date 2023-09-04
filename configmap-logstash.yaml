@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+  namespace: logging
+data:
+  logstash.conf: |-
+    input {
+      http {
+        port      => 8080
+      }
+    }
+    filter {
+      prune {
+        blacklist_values => {
+          "log" => "(MYSQL_PASSWORD|AWS_SECRET)"
+        }
+      }
+    }
+    output {
+      loggly {
+        key => "a1135757-439e-4fe7-8788-4c04891acb0e"
+        tag => "logstash,kubernetes,prometheus"
+        host => "logs-01.loggly.com."
+        proto => "https"
+      }
+    }
